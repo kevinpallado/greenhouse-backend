@@ -17,6 +17,9 @@ const server = http.createServer(app);
 const WebSocket = require('ws');
 const s = new WebSocket.Server({ server: server, path: "/readings", noServer: true});
 
+var gpio = require('onoff').Gpio;
+var waterpump = new gpio(19, OUT);
+var lightcontrol = new gpio(26, OUT);
 var client_connect = 0;
 var client_data = [];
 
@@ -44,6 +47,10 @@ s.on('connection', function (ws, req) {
 
             var msg_parse = JSON.parse(message);
             client_data = [];
+            
+            msg_parse.soilM < 150 ? waterpump.writeSync(1) : waterpump.writeSync(0);
+            msg_parse.lightI < 30 ? lightcontrol.writeSync(1) : lightcontrol.writeSync(0);
+
             for(x=0; x < client_connect; x++)
             {
                 client_data.push({ tempc: msg_parse.tempC, humidity: msg_parse.humid, soilm: msg_parse.soilM, lightInt: msg_parse.lightI });
