@@ -16,6 +16,7 @@
     "mysql2": "^2.0.0",
     "node-cron": "^2.0.3",
     "node-static": "^0.7.11",
+    "onoff": "^5.0.1",
     "request": "^2.88.0",
     "sequelize": "^5.21.2",
     "sequelize-cli": "^5.5.1",
