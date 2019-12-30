@@ -12,14 +12,14 @@ const express = require('express'),
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-var Gpio = require('onoff').Gpio;
+const Gpio = require('onoff').Gpio;
 const server = http.createServer(app);
 const WebSocket = require('ws');
 const s = new WebSocket.Server({ server: server, path: "/readings", noServer: true});
 
-var gpio = require('onoff').Gpio;
-var waterpump = new gpio(19, OUT);
-var lightcontrol = new gpio(26, OUT);
+const gpio = require('onoff').Gpio;
+const  waterpump = new gpio(19, 'out');
+const lightcontrol = new gpio(26, 'out');
 var client_connect = 0;
 var client_data = [];
 
@@ -69,19 +69,24 @@ s.on('connection', function (ws, req) {
 });
 
 cron.schedule('*/5 * * * * *', () => {
+    console.log("create post every 5 seconds");
     client_data.forEach(data => {
-        console.log()
+       // console.log()
         var http_post_req = {
         method: 'post',
         body: {
             nodepos : "P1",
+       //     temc : 12.54,
+       //     humidity : 12,
+        //    soilm : 13,
+         //   lightInt : 123
             tempc : data.tempc,
             humidity : data.humidity,
             soilm : data.soilm,
             lightInt: data.lightInt
        },
        json: true,
-       url: "http://localhost:3000/greenhouse/event?event=sensor-readings"
+       url: "http://127.0.1.1:3000/greenhouse/event?event=sensor-readings"
     }
     
     request(http_post_req, function (err, res, body) {
