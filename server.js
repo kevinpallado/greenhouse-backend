@@ -37,7 +37,7 @@ function heartbeat() {
   this.isAlive = true;
 }
 
-function logControls(soilmoisture,lightintesity)
+function soilLogControls(soilmoisture)
 {
     if(soilmoisture < 150)
     {
@@ -87,7 +87,10 @@ function logControls(soilmoisture,lightintesity)
         }
         
     }
+}
 
+function lightLogControls(lightintesity)
+{
     if(lightintesity < 30)
     {
         if(!lightcontrolison)
@@ -135,7 +138,6 @@ function logControls(soilmoisture,lightintesity)
             lightcontrolison = false;
         }
     }
-
 }
 
 s.on('connection', function (ws, req) {
@@ -150,8 +152,8 @@ s.on('connection', function (ws, req) {
 
             var msg_parse = JSON.parse(message);
             client_data = [];
-            
-            logControls(msg_parse.soilM, msg_parse.lightI);
+            lightLogControls(msg_parse.lightI);
+            soilLogControls(msg_parse.soilM);
             // msg_parse.soilM < 150 ? waterpump.writeSync(1) : waterpump.writeSync(0);
             // msg_parse.lightI < 30 ? lightcontrol.writeSync(1) : lightcontrol.writeSync(0);
 
