@@ -43,6 +43,7 @@ function logControls(soilmoisture,lightintesity)
     {
         if(!waterpumpison)
         {
+            console.log("Pump is on");
             waterpump.writeSync(1);
             waterpumpison = true;
             var http_post_req = {
@@ -64,9 +65,9 @@ function logControls(soilmoisture,lightintesity)
     }
     else
     {
-        waterpump.writeSync(0);
         if(waterpumpison)
         {
+            waterpump.writeSync(0);
             var http_post_req = {
                 method: 'post',
                 body: {
@@ -91,7 +92,7 @@ function logControls(soilmoisture,lightintesity)
     {
         if(!lightcontrolison)
         {
-            lightcontrol.lightcontrol(1);
+            lightcontrol.writeSync(1);
             lightcontrolison = true;
             
             var http_post_req = {
@@ -113,12 +114,9 @@ function logControls(soilmoisture,lightintesity)
     }
     else
     {
-        lightcontrol.lightcontrol(0);
         if(lightcontrolison)
         {
-            lightcontrol.lightcontrol(1);
-            lightcontrolison = true;
-            
+            lightcontrol.writeSync(0);
             var http_post_req = {
                 method: 'post',
                 body: {
