@@ -56,20 +56,12 @@ function soilLogControls(soilmoisture)
                url: "http://127.0.1.1:3000/greenhouse/event?event=control-logs"
             }
             
-            return request(http_post_req)
-            .then(data => {
-		waterpumpison = true;
-		console.log("Success throwing log");
+            request(http_post_req, function (err, res, body) {
+               if (err) throw err;
+               console.log("throwing log status")
+               console.log(res.statusCode);
+               waterpumpison = true;
             })
-            .catch(err => {
-		console.log(err);
-		return null;
-            });
-            //request(http_post_req, function (err, res, body) {
-            //   if (err) throw err;
-            //   console.log("throwing log status")
-            //   console.log(res.statusCode);
-            //})
         }
     }
     else
@@ -91,8 +83,8 @@ function soilLogControls(soilmoisture)
                if (err) throw err;
                console.log("throwing log status")
                console.log(res.statusCode);
+	       waterpumpison = false;
             })
-            waterpumpison = false;
         }
         
     }
@@ -105,7 +97,6 @@ function lightLogControls(lightintesity)
         if(!lightcontrolison)
         {
             lightcontrol.writeSync(1);
-            lightcontrolison = true;
             console.log("light control is on");
             var http_post_req = {
                 method: 'post',
@@ -121,6 +112,7 @@ function lightLogControls(lightintesity)
                if (err) throw err;
                console.log("throwing log status")
                console.log(res.statusCode);
+	       lightcontrolison = true;
             })
         }
     }
@@ -144,8 +136,8 @@ function lightLogControls(lightintesity)
                if (err) throw err;
                console.log("throwing log status")
                console.log(res.statusCode);
+               lightcontrolisoff = false;
             })
-            lightcontrolison = false;
         }
     }
 }
