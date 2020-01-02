@@ -56,12 +56,13 @@ function soilLogControls(soilmoisture)
                url: "http://127.0.1.1:3000/greenhouse/event?event=control-logs"
             }
             
+
             request(http_post_req, function (err, res, body) {
                if (err) throw err;
                console.log("throwing log status")
                console.log(res.statusCode);
                waterpumpison = true;
-            })
+            });
         }
     }
     else
@@ -78,12 +79,13 @@ function soilLogControls(soilmoisture)
                json: true,
                url: "http://127.0.1.1:3000/greenhouse/event?event=control-logs"
             }
+
             
             request(http_post_req, function (err, res, body) {
                if (err) throw err;
                console.log("throwing log status")
                console.log(res.statusCode);
-	       waterpumpison = false;
+	             waterpumpison = false;
             })
         }
         
@@ -108,12 +110,13 @@ function lightLogControls(lightintesity)
                url: "http://127.0.1.1:3000/greenhouse/event?event=control-logs"
             }
             
+
             request(http_post_req, function (err, res, body) {
                if (err) throw err;
                console.log("throwing log status")
                console.log(res.statusCode);
-	       lightcontrolison = true;
-            })
+	             lightcontrolison = true;
+            });
         }
     }
     else
@@ -132,6 +135,7 @@ function lightLogControls(lightintesity)
                url: "http://127.0.1.1:3000/greenhouse/event?event=control-logs"
             }
             
+
             request(http_post_req, function (err, res, body) {
                if (err) throw err;
                console.log("throwing log status")
