@@ -18,7 +18,7 @@ const WebSocket = require('ws');
 const s = new WebSocket.Server({ server: server, path: "/readings", noServer: true});
 
 const gpio = require('onoff').Gpio;
-const  waterpump = new gpio(19, 'out');
+const waterpump = new gpio(14, 'out');
 const lightcontrol = new gpio(26, 'out');
 var client_connect = 0;
 var client_data = [];
@@ -56,11 +56,20 @@ function soilLogControls(soilmoisture)
                url: "http://127.0.1.1:3000/greenhouse/event?event=control-logs"
             }
             
-            request(http_post_req, function (err, res, body) {
-               if (err) throw err;
-               console.log("throwing log status")
-               console.log(res.statusCode);
+            return request(http_post_req)
+            .then(data => {
+		waterpumpison = true;
+		console.log("Success throwing log");
             })
+            .catch(err => {
+		console.log(err);
+		return null;
+            });
+            //request(http_post_req, function (err, res, body) {
+            //   if (err) throw err;
+            //   console.log("throwing log status")
+            //   console.log(res.statusCode);
+            //})
         }
     }
     else
@@ -97,7 +106,7 @@ function lightLogControls(lightintesity)
         {
             lightcontrol.writeSync(1);
             lightcontrolison = true;
-            
+            console.log("light control is on");
             var http_post_req = {
                 method: 'post',
                 body: {
@@ -119,6 +128,7 @@ function lightLogControls(lightintesity)
     {
         if(lightcontrolison)
         {
+            console.log("light control is off");
             lightcontrol.writeSync(0);
             var http_post_req = {
                 method: 'post',
