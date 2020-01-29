@@ -147,6 +147,29 @@ function lightLogControls(lightintesity)
     }
 }
 
+function waterLogControl(waterLog)
+{
+    if(waterLog)
+        {
+            var http_post_req = {
+                method: 'post',
+                body: {
+                    component : "Water Pump",
+                    state : 1
+               },
+               json: true,
+               url: "http://127.0.1.1:3000/greenhouse/event?event=control-logs"
+            }
+            
+
+            request(http_post_req, function (err, res, body) {
+               if (err) throw err;
+               console.log("throwing log status")
+               console.log(res.statusCode);
+	             lightcontrolison = true;
+            });
+        }
+}
 s.on('connection', function (ws, req) {
     ws.isAlive = true;
     client_connect++;
@@ -175,9 +198,9 @@ s.on('connection', function (ws, req) {
                 {
                     lightLogControls(averageLightIntensity);
                     foggerLogControl(averageHumidtiy);
+                    waterLogControl(msg_parse.waterLog);
                 }
             }
-            console.log(client_connect);
             });
     });
     ws.on('close', function () {
