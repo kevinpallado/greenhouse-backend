@@ -18,11 +18,12 @@ const WebSocket = require('ws');
 const s = new WebSocket.Server({ server: server, path: "/readings", noServer: true});
 
 const gpio = require('onoff').Gpio;
-const waterpump = new gpio(14, 'out');
+const fogger = new gpio(14, 'out');
 const lightcontrol = new gpio(26, 'out');
 var client_connect = 0;
 var client_data = [];
-var waterpumpison = false;
+
+var foggerison = false;
 var lightcontrolison = false;
 
 require('dns').lookup(require('os').hostname(), function (err, add, fam) {
@@ -37,19 +38,19 @@ function heartbeat() {
   this.isAlive = true;
 }
 
-function soilLogControls(soilmoisture)
+function foggerLogControl(humidity)
 {
-    if(soilmoisture < 150)
+    if(humidity < 150)
     {
-        if(!waterpumpison)
+        if(!foggerison)
         {
-            console.log("Pump is on");
-            waterpump.writeSync(1);
-            waterpumpison = true;
+            console.log("Fogger is on");
+            fogger.writeSync(1);
+            foggerison = true;
             var http_post_req = {
                 method: 'post',
                 body: {
-                    component : "Waterpump",
+                    component : "fogger",
                     state : 1
                },
                json: true,
@@ -61,19 +62,19 @@ function soilLogControls(soilmoisture)
                if (err) throw err;
                console.log("throwing log status")
                console.log(res.statusCode);
-               waterpumpison = true;
+               foggerison = true;
             });
         }
     }
     else
     {
-        if(waterpumpison)
+        if(foggerison)
         {
-            waterpump.writeSync(0);
+            fogger.writeSync(0);
             var http_post_req = {
                 method: 'post',
                 body: {
-                    component : "Waterpump",
+                    component : "fogger",
                     state : 0
                },
                json: true,
@@ -85,7 +86,7 @@ function soilLogControls(soilmoisture)
                if (err) throw err;
                console.log("throwing log status")
                console.log(res.statusCode);
-	             waterpumpison = false;
+	             foggerison = false;
             })
         }
         
@@ -146,6 +147,29 @@ function lightLogControls(lightintesity)
     }
 }
 
+function waterLogControl(waterLog)
+{
+    if(waterLog)
+        {
+            var http_post_req = {
+                method: 'post',
+                body: {
+                    component : "Water Pump",
+                    state : 1
+               },
+               json: true,
+               url: "http://127.0.1.1:3000/greenhouse/event?event=control-logs"
+            }
+            
+
+            request(http_post_req, function (err, res, body) {
+               if (err) throw err;
+               console.log("throwing log status")
+               console.log(res.statusCode);
+	             lightcontrolison = true;
+            });
+        }
+}
 s.on('connection', function (ws, req) {
     ws.isAlive = true;
     client_connect++;
@@ -158,16 +182,25 @@ s.on('connection', function (ws, req) {
 
             var msg_parse = JSON.parse(message);
             client_data = [];
-            lightLogControls(msg_parse.lightI);
-            soilLogControls(msg_parse.soilM);
-            // msg_parse.soilM < 150 ? waterpump.writeSync(1) : waterpump.writeSync(0);
+            
+            // msg_parse.soilM < 150 ? fogger.writeSync(1) : fogger.writeSync(0);
             // msg_parse.lightI < 30 ? lightcontrol.writeSync(1) : lightcontrol.writeSync(0);
+
+            var averageHumidtiy = 0;
+            var averageLightIntensity = 0;
 
             for(x=0; x < client_connect; x++)
             {
                 client_data.push({ tempc: msg_parse.tempC, humidity: msg_parse.humid, soilm: msg_parse.soilM, lightInt: msg_parse.lightI });
+                averageHumidtiy += msg_parse.humid;
+                averageLightIntensity += msg_parse.lightI;
+                if(x+1 == client_connect)
+                {
+                    lightLogControls(averageLightIntensity);
+                    foggerLogControl(averageHumidtiy);
+                    waterLogControl(msg_parse.waterLog);
+                }
             }
-            console.log(client_connect);
             });
     });
     ws.on('close', function () {
@@ -180,18 +213,13 @@ s.on('connection', function (ws, req) {
     ws.on('pong', heartbeat);
 });
 
-cron.schedule('*/5 * * * * *', () => {
-    console.log("create post every 5 seconds");
+cron.schedule('*/5 * * * *', () => {
+    console.log("create post every 5 minutes");
     client_data.forEach(data => {
-       // console.log()
         var http_post_req = {
         method: 'post',
         body: {
             nodepos : "P1",
-       //     temc : 12.54,
-       //     humidity : 12,
-        //    soilm : 13,
-         //   lightInt : 123
             tempc : data.tempc,
             humidity : data.humidity,
             soilm : data.soilm,

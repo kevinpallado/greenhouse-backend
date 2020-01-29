@@ -15,6 +15,10 @@ Router.post("/event", async(req, res) => {
             response = await Logs.add(req.query.method, req.body);
             break;
 
+        case "upload-image":
+
+            break;
+            
         default:
             break;
     }
