@@ -186,11 +186,13 @@ async function waterLogControl(waterLog)
 }
 
 app.post('/sensor-data', function(req, res) {
+    console.log("sender => " + req.body.nodeid);
     client_data[req.body.nodeid] = { tempc: req.body.tempC, humidity: req.body.humid, soilm: req.body.soilM, lightInt: req.body.lightI, nodepos: req.body.nodepos };
     waterLogControl(req.body.waterLog);
 });
 function collectData()
 {
+    console.log("collecting data");
     for(x=0; x < client_data.length; x++)
     {
         averageHumidtiy += client_data[x].humid;
