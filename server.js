@@ -238,20 +238,31 @@ s.on('connection', function (ws, req) {
 
 cron.schedule('*/5 * * * * *', () => {
 
-    s.on('open', function open() {
+    var sock = new WebSocket("ws://192.168.1.9:3000/readings");
+
+    sock.onopen = function (event) {
+      console.log("Successfully connected");
+      setTimeout(function () { 
         var obj1 = {tempC : 32, humidity: 20, soilm: 100, lightInt: 300, nodepos: "test1", waterLog : false };
-        ws.send(obj1);
-    });
+          sock.send(obj1); 
+        }, 1000);
+    };
 
-    s.on('open', function open() {
-        var obj2 = {tempC : 34, humidity: 30, soilm: 200, lightInt: 400, nodepos: "test2", waterLog : false };
-        ws.send(obj2);
-    });
+    sock.onopen = function (event) {
+        console.log("Successfully connected");
+        setTimeout(function () { 
+            var obj2 = {tempC : 34, humidity: 30, soilm: 200, lightInt: 400, nodepos: "test2", waterLog : false };
+            sock.send(obj2); 
+          }, 1000);
+    };
 
-    s.on('open', function open() {
-        var obj3 = {tempC : 36, humidity: 40, soilm: 300, lightInt: 500, nodepos: "test3", waterLog : false };
-        ws.send(obj3);
-    });
+    sock.onopen = function (event) {
+        console.log("Successfully connected");
+        setTimeout(function () { 
+            var obj3 = {tempC : 36, humidity: 40, soilm: 300, lightInt: 500, nodepos: "test3", waterLog : false };
+            sock.send(obj3); 
+          }, 1000);
+    };
 });
 
 cron.schedule('*/30 * * * * *', () => {
