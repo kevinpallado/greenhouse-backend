@@ -15,7 +15,7 @@ app.use(bodyParser.json());
 const Gpio = require('onoff').Gpio;
 const server = http.createServer(app);
 const WebSocket = require('ws');
-const s = new WebSocket.Server({ server: server, path: "/readings", noServer: true});
+// const s = new WebSocket.Server({ server: server, path: "/readings", noServer: true});
 
 const gpio = require('onoff').Gpio;
 const fogger = new gpio(14, 'out');
@@ -98,6 +98,7 @@ async function foggerLogControl(humidity)
         }
         
     }
+    averageHumidtiy = 0;
 }
 
 async function lightLogControls(lightintesity)
@@ -156,6 +157,7 @@ async function lightLogControls(lightintesity)
 	   });
         }
     }
+    averageLightIntensity = 0;
 }
 async function waterLogControl(waterLog)
 {
@@ -183,87 +185,43 @@ async function waterLogControl(waterLog)
         }
 }
 
-function collectData(data, maxclient)
+app.post('/sensor-data', function(req, res) {
+    client_data[req.body.nodeid] = { tempc: req.body.tempC, humidity: req.body.humid, soilm: req.body.soilM, lightInt: req.body.lightI, nodepos: req.body.nodepos };
+    waterLogControl(req.body.waterLog);
+});
+function collectData()
 {
-    // for(x=0; x < client_connect; x++)
-    // {
-    //     client_data.push({ tempc: msg_parse.tempC, humidity: msg_parse.humid, soilm: msg_parse.soilM, lightInt: msg_parse.lightI, nodepos: msg_parse.nodepos });          
-    //     if(x+1 == client_connect)
-    //     {
-    //         lightLogControls(averageLightIntensity);
-    //         foggerLogControl(averageHumidtiy);
-    //         waterLogControl(msg_parse.waterLog);
-    //     }
-    // }
+    for(x=0; x < client_data.length; x++)
+    {
+        averageHumidtiy += client_data[x].humid;
+        averageLightIntensity += client_data[x].lightI;
+    }
+    lightLogControls(averageLightIntensity);
+    foggerLogControl(averageHumidtiy);
 }
-
-
-s.on('connection', function (ws, req) {
-    ws.isAlive = true;
-    client_connect++;
-    ws.on('message', function (message) {
+cron.schedule('*/3 * * * * *', () => {
+    collectData();
+});
+// s.on('connection', function (ws, req) {
+//     ws.isAlive = true;
+//     client_connect++;
+//     ws.on('message', function (message) {
         
-        var msg_parse = JSON.parse(message);
-            client_data[client_connect] = [];
-            
-            // msg_parse.soilM < 150 ? fogger.writeSync(1) : fogger.writeSync(0);
-            // msg_parse.lightI < 30 ? lightcontrol.writeSync(1) : lightcontrol.writeSync(0);
-
-            for(x=0; x < client_connect; x++)
-            {
-                client_data.push({ tempc: msg_parse.tempC, humidity: msg_parse.humid, soilm: msg_parse.soilM, lightInt: msg_parse.lightI, nodepos: msg_parse.nodepos });
-                
-                if(x+1 == client_connect)
-                {
-                    lightLogControls(averageLightIntensity);
-                    foggerLogControl(averageHumidtiy);
-                    waterLogControl(msg_parse.waterLog);
-                }
-            }
-        s.clients.forEach(function (client) { //broadcast incoming message to all clients (s.clients)
-            if (client.isAlive === false) return client.terminate();
-            ws.isAlive = false;
-            ws.ping(noop);
-            });
-    });
-    ws.on('close', function () {
-        client_connect--;
-        console.log(client_connect);
-        console.log("lost one client");
-    });
-    console.log(client_connect);
-    console.log("new client connected");
-    ws.on('pong', heartbeat);
-});
-
-cron.schedule('*/5 * * * * *', () => {
-
-    var sock = new WebSocket("ws://192.168.1.9:3000/readings");
-
-    sock.onopen = function (event) {
-      console.log("Successfully connected");
-      setTimeout(function () { 
-        var obj1 = {tempC : 32, humidity: 20, soilm: 100, lightInt: 300, nodepos: "test1", waterLog : false };
-          sock.send(obj1); 
-        }, 1000);
-    };
-
-    sock.onopen = function (event) {
-        console.log("Successfully connected");
-        setTimeout(function () { 
-            var obj2 = {tempC : 34, humidity: 30, soilm: 200, lightInt: 400, nodepos: "test2", waterLog : false };
-            sock.send(obj2); 
-          }, 1000);
-    };
-
-    sock.onopen = function (event) {
-        console.log("Successfully connected");
-        setTimeout(function () { 
-            var obj3 = {tempC : 36, humidity: 40, soilm: 300, lightInt: 500, nodepos: "test3", waterLog : false };
-            sock.send(obj3); 
-          }, 1000);
-    };
-});
+//         s.clients.forEach(function (client) { //broadcast incoming message to all clients (s.clients)1
+//             if (client.isAlive === false) return client.terminate();
+//             ws.isAlive = false;
+//             ws.ping(noop);
+//         });
+//     });
+//     ws.on('close', function () {
+//         client_connect--;
+//         console.log(client_connect);
+//         console.log("lost one client");
+//     });
+//     console.log(client_connect);
+//     console.log("new client connected");
+//     ws.on('pong', heartbeat);
+// });
 
 cron.schedule('*/30 * * * * *', () => {
     console.log("log data every 30 seconds");
