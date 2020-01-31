@@ -238,17 +238,17 @@ s.on('connection', function (ws, req) {
 
 cron.schedule('*/5 * * * * *', () => {
 
-    ws.on('open', function open() {
+    s.on('open', function open() {
         var obj1 = {tempC : 32, humidity: 20, soilm: 100, lightInt: 300, nodepos: "test1", waterLog : false };
         ws.send(obj1);
     });
 
-    ws.on('open', function open() {
+    s.on('open', function open() {
         var obj2 = {tempC : 34, humidity: 30, soilm: 200, lightInt: 400, nodepos: "test2", waterLog : false };
         ws.send(obj2);
     });
 
-    ws.on('open', function open() {
+    s.on('open', function open() {
         var obj3 = {tempC : 36, humidity: 40, soilm: 300, lightInt: 500, nodepos: "test3", waterLog : false };
         ws.send(obj3);
     });
