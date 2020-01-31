@@ -38,7 +38,7 @@ function heartbeat() {
   this.isAlive = true;
 }
 
-function foggerLogControl(humidity)
+async function foggerLogControl(humidity)
 {
     if(humidity < 150)
     {
@@ -57,13 +57,15 @@ function foggerLogControl(humidity)
                url: "http://127.0.1.1:3000/greenhouse/event?event=control-logs"
             }
             
-
+	   return new Promise(function(resolve,reject) {
             request(http_post_req, function (err, res, body) {
-               if (err) throw err;
+               if (err) reject(err);
                console.log("throwing log status")
                console.log(res.statusCode);
                foggerison = true;
+               resolve(foggerison);
             });
+	   });
         }
     }
     else
@@ -81,19 +83,21 @@ function foggerLogControl(humidity)
                url: "http://127.0.1.1:3000/greenhouse/event?event=control-logs"
             }
 
-            
+            return new Promise(function(resolve,reject) {
             request(http_post_req, function (err, res, body) {
-               if (err) throw err;
+               if (err) reject(err);
                console.log("throwing log status")
                console.log(res.statusCode);
-	             foggerison = false;
-            })
+	       foggerison = false;
+               resolve(foggerison);
+              });
+	    });
         }
         
     }
 }
 
-function lightLogControls(lightintesity)
+async function lightLogControls(lightintesity)
 {
     if(lightintesity < 30)
     {
@@ -111,13 +115,15 @@ function lightLogControls(lightintesity)
                url: "http://127.0.1.1:3000/greenhouse/event?event=control-logs"
             }
             
-
+	   return new Promise(function(resolve, reject) {
             request(http_post_req, function (err, res, body) {
-               if (err) throw err;
+               if (err) reject(err);
                console.log("throwing log status")
                console.log(res.statusCode);
-	             lightcontrolison = true;
-            });
+	       lightcontrolison = true;
+	       resolve(lightcontrolison);
+             });
+	    });
         }
     }
     else
@@ -136,17 +142,47 @@ function lightLogControls(lightintesity)
                url: "http://127.0.1.1:3000/greenhouse/event?event=control-logs"
             }
             
-
+           return new Promise(function(resolve,reject) {
             request(http_post_req, function (err, res, body) {
-               if (err) throw err;
+               if (err) reject(err);
                console.log("throwing log status")
                console.log(res.statusCode);
                lightcontrolisoff = false;
-            })
+	       resolve(lightcontrolisoff);
+            });
+	   });
         }
     }
 }
 
+<<<<<<< Updated upstream
+=======
+async function waterLogControl(waterLog)
+{
+    if(waterLog)
+        {
+            var http_post_req = {
+                method: 'post',
+                body: {
+                    component : "Water Pump",
+                    state : 1
+               },
+               json: true,
+               url: "http://127.0.1.1:3000/greenhouse/event?event=control-logs"
+            }
+            
+	   return new Promise(function(resolve,reject) {
+            request(http_post_req, function (err, res, body) {
+               if (err) reject(err);
+               console.log("throwing log status")
+               console.log(res.statusCode);
+	       lightcontrolison = true;
+	       resolve(lightcontrolison);
+            });
+	   });
+        }
+}
+>>>>>>> Stashed changes
 s.on('connection', function (ws, req) {
     ws.isAlive = true;
     client_connect++;
@@ -168,13 +204,19 @@ s.on('connection', function (ws, req) {
 
             for(x=0; x < client_connect; x++)
             {
-                client_data.push({ tempc: msg_parse.tempC, humidity: msg_parse.humid, soilm: msg_parse.soilM, lightInt: msg_parse.lightI });
+                client_data.push({ tempc: msg_parse.tempC, humidity: msg_parse.humid, soilm: msg_parse.soilM, lightInt: msg_parse.lightI, nodepos: msg_parse.nodepos });
                 averageHumidtiy += msg_parse.humid;
                 averageLightIntensity += msg_parse.lightI;
                 if(x+1 == client_connect)
                 {
+<<<<<<< Updated upstream
                     lightLogControls(averageLightIntensity);
                     foggerLogControl(averageHumidtiy);
+=======
+                    //lightLogControls(averageLightIntensity);
+                    //foggerLogControl(averageHumidtiy);
+                    //waterLogControl(msg_parse.waterLog);
+>>>>>>> Stashed changes
                 }
             }
             console.log(client_connect);
@@ -190,13 +232,13 @@ s.on('connection', function (ws, req) {
     ws.on('pong', heartbeat);
 });
 
-cron.schedule('*/5 * * * *', () => {
-    console.log("create post every 5 minutes");
+cron.schedule('*/30 * * * * *', () => {
+    console.log("log data every 30 seconds");
     client_data.forEach(data => {
         var http_post_req = {
         method: 'post',
         body: {
-            nodepos : "P1",
+            nodepos : data.nodepos,
             tempc : data.tempc,
             humidity : data.humidity,
             soilm : data.soilm,
@@ -207,7 +249,6 @@ cron.schedule('*/5 * * * *', () => {
     }
     
     request(http_post_req, function (err, res, body) {
-       if (err) throw err;
        console.log(res.statusCode);
     })
 });
