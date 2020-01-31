@@ -155,12 +155,16 @@ async function lightLogControls(lightintesity)
     }
 }
 
+<<<<<<< HEAD
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
 =======
 =======
 >>>>>>> Stashed changes
 async function waterLogControl(waterLog)
+=======
+function waterLogControl(waterLog)
+>>>>>>> 16073156636996868682d016aaf7ee4aafe8e45a
 {
     if(waterLog)
         {
@@ -174,6 +178,7 @@ async function waterLogControl(waterLog)
                url: "http://127.0.1.1:3000/greenhouse/event?event=control-logs"
             }
             
+<<<<<<< HEAD
 	   return new Promise(function(resolve,reject) {
             request(http_post_req, function (err, res, body) {
                if (err) reject(err);
@@ -186,6 +191,17 @@ async function waterLogControl(waterLog)
         }
 }
 >>>>>>> Stashed changes
+=======
+
+            request(http_post_req, function (err, res, body) {
+               if (err) throw err;
+               console.log("throwing log status")
+               console.log(res.statusCode);
+	             lightcontrolison = true;
+            });
+        }
+}
+>>>>>>> 16073156636996868682d016aaf7ee4aafe8e45a
 s.on('connection', function (ws, req) {
     ws.isAlive = true;
     client_connect++;
@@ -216,6 +232,7 @@ s.on('connection', function (ws, req) {
 <<<<<<< Updated upstream
                     lightLogControls(averageLightIntensity);
                     foggerLogControl(averageHumidtiy);
+<<<<<<< HEAD
 =======
                     //lightLogControls(averageLightIntensity);
                     //foggerLogControl(averageHumidtiy);
@@ -226,9 +243,11 @@ s.on('connection', function (ws, req) {
                     //foggerLogControl(averageHumidtiy);
                     //waterLogControl(msg_parse.waterLog);
 >>>>>>> Stashed changes
+=======
+                    waterLogControl(msg_parse.waterLog);
+>>>>>>> 16073156636996868682d016aaf7ee4aafe8e45a
                 }
             }
-            console.log(client_connect);
             });
     });
     ws.on('close', function () {
