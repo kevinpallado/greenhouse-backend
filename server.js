@@ -156,7 +156,10 @@ async function lightLogControls(lightintesity)
 }
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 =======
+=======
+>>>>>>> Stashed changes
 async function waterLogControl(waterLog)
 {
     if(waterLog)
@@ -210,8 +213,14 @@ s.on('connection', function (ws, req) {
                 if(x+1 == client_connect)
                 {
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
                     lightLogControls(averageLightIntensity);
                     foggerLogControl(averageHumidtiy);
+=======
+                    //lightLogControls(averageLightIntensity);
+                    //foggerLogControl(averageHumidtiy);
+                    //waterLogControl(msg_parse.waterLog);
+>>>>>>> Stashed changes
 =======
                     //lightLogControls(averageLightIntensity);
                     //foggerLogControl(averageHumidtiy);
