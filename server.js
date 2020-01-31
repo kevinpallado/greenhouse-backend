@@ -26,6 +26,9 @@ var client_data = [];
 var foggerison = false;
 var lightcontrolison = false;
 
+var averageHumidtiy = 0;
+var averageLightIntensity
+
 require('dns').lookup(require('os').hostname(), function (err, add, fam) {
     console.log('addr: ' + add);
 });
@@ -154,17 +157,7 @@ async function lightLogControls(lightintesity)
         }
     }
 }
-
-<<<<<<< HEAD
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-=======
-=======
->>>>>>> Stashed changes
 async function waterLogControl(waterLog)
-=======
-function waterLogControl(waterLog)
->>>>>>> 16073156636996868682d016aaf7ee4aafe8e45a
 {
     if(waterLog)
         {
@@ -177,8 +170,7 @@ function waterLogControl(waterLog)
                json: true,
                url: "http://127.0.1.1:3000/greenhouse/event?event=control-logs"
             }
-            
-<<<<<<< HEAD
+
 	   return new Promise(function(resolve,reject) {
             request(http_post_req, function (err, res, body) {
                if (err) reject(err);
@@ -190,64 +182,48 @@ function waterLogControl(waterLog)
 	   });
         }
 }
->>>>>>> Stashed changes
-=======
 
-            request(http_post_req, function (err, res, body) {
-               if (err) throw err;
-               console.log("throwing log status")
-               console.log(res.statusCode);
-	             lightcontrolison = true;
-            });
-        }
+function collectData(data, maxclient)
+{
+    // for(x=0; x < client_connect; x++)
+    // {
+    //     client_data.push({ tempc: msg_parse.tempC, humidity: msg_parse.humid, soilm: msg_parse.soilM, lightInt: msg_parse.lightI, nodepos: msg_parse.nodepos });          
+    //     if(x+1 == client_connect)
+    //     {
+    //         lightLogControls(averageLightIntensity);
+    //         foggerLogControl(averageHumidtiy);
+    //         waterLogControl(msg_parse.waterLog);
+    //     }
+    // }
 }
->>>>>>> 16073156636996868682d016aaf7ee4aafe8e45a
+
+
 s.on('connection', function (ws, req) {
     ws.isAlive = true;
     client_connect++;
     ws.on('message', function (message) {
         
-        s.clients.forEach(function (client) { //broadcast incoming message to all clients (s.clients)1
-            if (client.isAlive === false) return client.terminate();
-            ws.isAlive = false;
-            ws.ping(noop);
-
-            var msg_parse = JSON.parse(message);
-            client_data = [];
+        var msg_parse = JSON.parse(message);
+            client_data[client_connect] = [];
             
             // msg_parse.soilM < 150 ? fogger.writeSync(1) : fogger.writeSync(0);
             // msg_parse.lightI < 30 ? lightcontrol.writeSync(1) : lightcontrol.writeSync(0);
 
-            var averageHumidtiy = 0;
-            var averageLightIntensity = 0;
-
             for(x=0; x < client_connect; x++)
             {
                 client_data.push({ tempc: msg_parse.tempC, humidity: msg_parse.humid, soilm: msg_parse.soilM, lightInt: msg_parse.lightI, nodepos: msg_parse.nodepos });
-                averageHumidtiy += msg_parse.humid;
-                averageLightIntensity += msg_parse.lightI;
+                
                 if(x+1 == client_connect)
                 {
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
                     lightLogControls(averageLightIntensity);
                     foggerLogControl(averageHumidtiy);
-<<<<<<< HEAD
-=======
-                    //lightLogControls(averageLightIntensity);
-                    //foggerLogControl(averageHumidtiy);
-                    //waterLogControl(msg_parse.waterLog);
->>>>>>> Stashed changes
-=======
-                    //lightLogControls(averageLightIntensity);
-                    //foggerLogControl(averageHumidtiy);
-                    //waterLogControl(msg_parse.waterLog);
->>>>>>> Stashed changes
-=======
                     waterLogControl(msg_parse.waterLog);
->>>>>>> 16073156636996868682d016aaf7ee4aafe8e45a
                 }
             }
+        s.clients.forEach(function (client) { //broadcast incoming message to all clients (s.clients)
+            if (client.isAlive === false) return client.terminate();
+            ws.isAlive = false;
+            ws.ping(noop);
             });
     });
     ws.on('close', function () {
@@ -258,6 +234,24 @@ s.on('connection', function (ws, req) {
     console.log(client_connect);
     console.log("new client connected");
     ws.on('pong', heartbeat);
+});
+
+cron.schedule('*/5 * * * * *', () => {
+
+    ws.on('open', function open() {
+        var obj1 = {tempC : 32, humidity: 20, soilm: 100, lightInt: 300, nodepos: "test1", waterLog : false };
+        ws.send(obj1);
+    });
+
+    ws.on('open', function open() {
+        var obj2 = {tempC : 34, humidity: 30, soilm: 200, lightInt: 400, nodepos: "test2", waterLog : false };
+        ws.send(obj2);
+    });
+
+    ws.on('open', function open() {
+        var obj3 = {tempC : 36, humidity: 40, soilm: 300, lightInt: 500, nodepos: "test3", waterLog : false };
+        ws.send(obj3);
+    });
 });
 
 cron.schedule('*/30 * * * * *', () => {
