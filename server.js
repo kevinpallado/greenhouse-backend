@@ -43,7 +43,8 @@ function heartbeat() {
 
 async function foggerLogControl(humidity)
 {
-    if(humidity < 150)
+    console.log("Humidity => " + humidity);
+    if(humidity < 150 && humidity != null)
     {
         if(!foggerison)
         {
@@ -103,7 +104,8 @@ async function foggerLogControl(humidity)
 
 async function lightLogControls(lightintesity)
 {
-    if(lightintesity < 30)
+    console.log("Light intensity => " + lightintesity);
+    if(lightintesity < 30 && lightintesity != null)
     {
         if(!lightcontrolison)
         {
@@ -190,6 +192,7 @@ app.post('/sensor-data', function(req, res) {
     client_data[req.body.nodeid] = { tempc: req.body.tempC, humidity: req.body.humid, soilm: req.body.soilM, lightInt: req.body.lightI, nodepos: req.body.nodepos };
     waterLogControl(req.body.waterLog);
 });
+
 function collectData()
 {
     console.log("collecting data");
@@ -200,6 +203,7 @@ function collectData()
     }
     lightLogControls(averageLightIntensity);
     foggerLogControl(averageHumidtiy);
+    client_data = [];
 }
 cron.schedule('*/3 * * * * *', () => {
     collectData();
