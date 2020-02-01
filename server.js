@@ -190,18 +190,49 @@ async function waterLogControl(waterLog)
 	   });
         }
 }
-
-app.post('/sensor-data', function(req, res) {
-    console.log(req.body.nodeid);
-//    if(req.body.nodeid != undefined)
-  //  {
-    //console.log("sender => " + req.body.nodeid);
-    //console.log("light intensity => " + req.body.lightI);
-    //console.log("humidity ===> " + req.body.humid);
-    //client_data[req.body.nodeid] = { tempc: req.body.tempC, humidity: req.body.humid, soilm: req.body.soilM, lightInt: req.body.lightI, nodepos: req.body.nodepos };
-    //console.log(client_data[req.body.nodeid]);
-    //waterLogControl(req.body.waterLog);
-//    }
+app.post('/sensor-data1', function(req, res) {
+    if(req.body.nodeid != undefined)
+    {
+     console.log("sender => " + req.body.nodeid);
+     console.log("light intensity => " + req.body.lightI);
+     console.log("humidity ===> " + req.body.humid);
+     client_data[req.body.nodeid] = { tempc: req.body.tempC, humidity: req.body.humid, soilm: req.body.soilM, lightInt: req.body.lightI, nodepos: req.body.nodepos };
+     console.log(client_data[req.body.nodeid]);
+     waterLogControl(req.body.waterLog);
+    }
+});
+app.post('/sensor-data2', function(req, res) {
+   if(req.body.nodeid != undefined)
+   {
+    console.log("sender => " + req.body.nodeid);
+    console.log("light intensity => " + req.body.lightI);
+    console.log("humidity ===> " + req.body.humid);
+    client_data[req.body.nodeid] = { tempc: req.body.tempC, humidity: req.body.humid, soilm: req.body.soilM, lightInt: req.body.lightI, nodepos: req.body.nodepos };
+    console.log(client_data[req.body.nodeid]);
+    waterLogControl(req.body.waterLog);
+   }
+});
+app.post('/sensor-data3', function(req, res) {
+    if(req.body.nodeid != undefined)
+    {
+     console.log("sender => " + req.body.nodeid);
+     console.log("light intensity => " + req.body.lightI);
+     console.log("humidity ===> " + req.body.humid);
+     client_data[req.body.nodeid] = { tempc: req.body.tempC, humidity: req.body.humid, soilm: req.body.soilM, lightInt: req.body.lightI, nodepos: req.body.nodepos };
+     console.log(client_data[req.body.nodeid]);
+     waterLogControl(req.body.waterLog);
+    }
+});
+app.post('/sensor-data4', function(req, res) {
+    if(req.body.nodeid != undefined)
+    {
+     console.log("sender => " + req.body.nodeid);
+     console.log("light intensity => " + req.body.lightI);
+     console.log("humidity ===> " + req.body.humid);
+     client_data[req.body.nodeid] = { tempc: req.body.tempC, humidity: req.body.humid, soilm: req.body.soilM, lightInt: req.body.lightI, nodepos: req.body.nodepos };
+     console.log(client_data[req.body.nodeid]);
+     waterLogControl(req.body.waterLog);
+    }
 });
 
 function collectData()
