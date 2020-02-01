@@ -21,13 +21,13 @@ const gpio = require('onoff').Gpio;
 const fogger = new gpio(14, 'out');
 const lightcontrol = new gpio(26, 'out');
 var client_connect = 0;
-var client_data = [];
+let client_data = [];
 
 var foggerison = false;
 var lightcontrolison = false;
 
-var averageHumidtiy = 0;
-var averageLightIntensity
+var averageHumidity = 0;
+var averageLightIntensity = 0;
 
 require('dns').lookup(require('os').hostname(), function (err, add, fam) {
     console.log('addr: ' + add);
@@ -43,9 +43,11 @@ function heartbeat() {
 
 async function foggerLogControl(humidity)
 {
-    console.log("Humidity => " + humidity);
+    console.log("ALERT HUMIDITY !!!!");
+    //console.log("Humidity => " + humidity);
     if(humidity < 150 && humidity != undefined && humidity > 0)
     {
+	console.log("HUMIDITY => " + humidity);
         if(!foggerison)
         {
             console.log("Fogger is on");
@@ -102,11 +104,13 @@ async function foggerLogControl(humidity)
     averageHumidtiy = 0;
 }
 
-async function lightLogControls(lightintesity)
+async function lightLogControls(lightintensity)
 {
-    console.log("Light intensity => " + lightintesity);
-    if(lightintesity < 30 && lightintesity != undefined && lightintesity > 0)
+    console.log("ALERT LIGHT INTENSITY!!!");
+    //console.log("Light intensity => " + lightintesity);
+    if(lightintensity < 30 && lightintensity != undefined && lightintensity > 0)
     {
+	console.log("Light intensity => " + lightintensity);
         if(!lightcontrolison)
         {
             lightcontrol.writeSync(1);
@@ -188,9 +192,16 @@ async function waterLogControl(waterLog)
 }
 
 app.post('/sensor-data', function(req, res) {
-    console.log("sender => " + req.body.nodeid);
-    client_data[req.body.nodeid] = { tempc: req.body.tempC, humidity: req.body.humid, soilm: req.body.soilM, lightInt: req.body.lightI, nodepos: req.body.nodepos };
-    waterLogControl(req.body.waterLog);
+    console.log(req.body.nodeid);
+//    if(req.body.nodeid != undefined)
+  //  {
+    //console.log("sender => " + req.body.nodeid);
+    //console.log("light intensity => " + req.body.lightI);
+    //console.log("humidity ===> " + req.body.humid);
+    //client_data[req.body.nodeid] = { tempc: req.body.tempC, humidity: req.body.humid, soilm: req.body.soilM, lightInt: req.body.lightI, nodepos: req.body.nodepos };
+    //console.log(client_data[req.body.nodeid]);
+    //waterLogControl(req.body.waterLog);
+//    }
 });
 
 function collectData()
@@ -198,14 +209,16 @@ function collectData()
     console.log("collecting data");
     for(x=0; x < client_data.length; x++)
     {
-        averageHumidtiy += client_data[x].humid;
-        averageLightIntensity += client_data[x].lightI;
+        //console.log("DATA ==================> " + client_data[x].lightInt);
+        averageHumidity += client_data[x].humidity;
+        averageLightIntensity += client_data[x].lightInt;
     }
-    lightLogControls(averageLightIntensity);
-    foggerLogControl(averageHumidtiy);
+    console.log("average light intensity ===========> " + averageLightIntensity/client_data.length);
+    lightLogControls(averageLightIntensity/client_data.length);
+    foggerLogControl(averageHumidity/client_data.length);
     client_data = [];
 }
-cron.schedule('*/3 * * * * *', () => {
+cron.schedule('*/5 * * * * *', () => {
     collectData();
 });
 // s.on('connection', function (ws, req) {
