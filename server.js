@@ -44,7 +44,7 @@ function heartbeat() {
 async function foggerLogControl(humidity)
 {
     console.log("Humidity => " + humidity);
-    if(humidity < 150 && humidity != null)
+    if(humidity < 150 && humidity != undefined && humidity > 0)
     {
         if(!foggerison)
         {
@@ -105,7 +105,7 @@ async function foggerLogControl(humidity)
 async function lightLogControls(lightintesity)
 {
     console.log("Light intensity => " + lightintesity);
-    if(lightintesity < 30 && lightintesity != null)
+    if(lightintesity < 30 && lightintesity != undefined && lightintesity > 0)
     {
         if(!lightcontrolison)
         {
