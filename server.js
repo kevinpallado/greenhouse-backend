@@ -8,6 +8,7 @@ const express = require('express'),
     path = require('path'),
     cron = require('node-cron'),
     file = new static.Server('./'),
+    multer = require('multer'),
     app = express();
 
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -28,6 +29,17 @@ var lightcontrolison = false;
 
 var averageHumidity = 0;
 var averageLightIntensity = 0;
+
+const handleError = (err, res) => {
+    res
+      .status(500)
+      .contentType("text/plain")
+      .end("Oops! Something went wrong!");
+  };
+  
+const upload = multer({
+    dest: "~/greenhouse/images"
+});
 
 require('dns').lookup(require('os').hostname(), function (err, add, fam) {
     console.log('addr: ' + add);
@@ -234,6 +246,36 @@ app.post('/sensor-data4', function(req, res) {
      waterLogControl(req.body.waterLog);
     }
 });
+
+
+app.post(
+    "/upload",
+    upload.single("file" /* name attribute of <file> element in your form */),
+    (req, res) => {
+      const tempPath = req.file.path;
+      const targetPath = path.join(__dirname, "./uploads/image.png");
+  
+      if (path.extname(req.file.originalname).toLowerCase() === ".png" || path.extname(req.file.originalname).toLowerCase() === ".jpg") {
+        fs.rename(tempPath, targetPath, err => {
+          if (err) return handleError(err, res);
+  
+          res
+            .status(200)
+            .contentType("text/plain")
+            .end("File uploaded!");
+        });
+      } else {
+        fs.unlink(tempPath, err => {
+          if (err) return handleError(err, res);
+  
+          res
+            .status(403)
+            .contentType("text/plain")
+            .end("Only .png files are allowed!");
+        });
+      }
+    }
+  );
 
 function collectData()
 {
