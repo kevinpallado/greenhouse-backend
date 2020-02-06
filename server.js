@@ -61,7 +61,6 @@ async function foggerLogControl(humidity)
     //console.log("Humidity => " + humidity);
     if(humidity < 150 && humidity != undefined && humidity > 0)
     {
-	console.log("HUMIDITY => " + humidity);
         if(!foggerison)
         {
             console.log("Fogger is on");
@@ -81,8 +80,7 @@ async function foggerLogControl(humidity)
 	   return new Promise(function(resolve,reject) {
             request(http_post_req, function (err, res, body) {
                if (err) reject(err);
-               console.log("throwing log status")
-               console.log(res.statusCode);
+               console.log("Fogger On-Log code => " + res.statusCode);
                foggerison = true;
                resolve(foggerison);
             });
@@ -108,8 +106,7 @@ async function foggerLogControl(humidity)
             return new Promise(function(resolve,reject) {
             request(http_post_req, function (err, res, body) {
                if (err) reject(err);
-               console.log("throwing log status")
-               console.log(res.statusCode);
+               console.log("Fogger Off-Log code => " + res.statusCode);
 	       foggerison = false;
                resolve(foggerison);
               });
@@ -123,10 +120,8 @@ async function foggerLogControl(humidity)
 async function lightLogControls(lightintensity)
 {
     console.log("ALERT LIGHT INTENSITY!!!");
-    //console.log("Light intensity => " + lightintesity);
     if(lightintensity < 30 && lightintensity != undefined && lightintensity > 0 && lightintensity != Infinity && lightintensity != NaN)
     {
-	console.log("Light intensity => " + lightintensity);
         if(!lightcontrolison)
         {
             lightcontrol.writeSync(1);
@@ -145,15 +140,14 @@ async function lightLogControls(lightintensity)
 	   return new Promise(function(resolve, reject) {
             request(http_post_req, function (err, res, body) {
                if (err) reject(err);
-               console.log("throwing log status")
-               console.log(res.statusCode);
+               console.log("Lightintensity On-Log code => " + res.statusCode);
 	       lightcontrolison = true;
 	       resolve(lightcontrolison);
              });
 	    });
         }
     }
-    else if(lightintensity != Infinity && lighintensity != NaN && lightintensity != undefined)
+    else if(lightintensity != Infinity && lightintensity != NaN && lightintensity != undefined)
     {
         if(lightcontrolison)
         {
@@ -164,7 +158,7 @@ async function lightLogControls(lightintensity)
                 body: {
                     component : "LED Lights",
                     state : 1,
-		    position : "default"
+		            position : "default"
                },
                json: true,
                url: "http://127.0.1.1:3000/greenhouse/event?event=control-logs"
@@ -173,8 +167,7 @@ async function lightLogControls(lightintensity)
            return new Promise(function(resolve,reject) {
             request(http_post_req, function (err, res, body) {
                if (err) reject(err);
-               console.log("throwing log status")
-               console.log(res.statusCode);
+               console.log("Lightintensity Off-Log code => " + res.statusCode);
                lightcontrolisoff = false;
 	       resolve(lightcontrolisoff);
             });
@@ -192,7 +185,7 @@ async function waterLogControl(waterLog, position)
                 body: {
                     component : "Water Pump",
                     state : 1,
-		    position : position
+		            position : position
                },
                json: true,
                url: "http://127.0.1.1:3000/greenhouse/event?event=control-logs"
@@ -201,8 +194,7 @@ async function waterLogControl(waterLog, position)
 	   return new Promise(function(resolve,reject) {
             request(http_post_req, function (err, res, body) {
                if (err) reject(err);
-               console.log("throwing log status")
-               console.log(res.statusCode);
+               console.log("Water Log code => " + res.statusCode);
 	       lightcontrolison = true;
 	       resolve(lightcontrolison);
             });
@@ -296,14 +288,13 @@ app.post(
 
 function collectData()
 {
-    console.log("collecting data");
+    console.log("Collecting Data");
     for(x=0; x < client_data.length; x++)
     {
-        //console.log("DATA ==================> " + client_data[x].lightInt);
         averageHumidity += client_data[x].humidity;
         averageLightIntensity += client_data[x].lightInt;
     }
-    console.log("average light intensity ===========> " + averageLightIntensity/client_data.length);
+    // console.log("average light intensity ===========> " + averageLightIntensity/client_data.length);
     lightLogControls(averageLightIntensity/client_data.length);
     foggerLogControl(averageHumidity/client_data.length);
     client_data = [];
