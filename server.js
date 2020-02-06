@@ -169,7 +169,7 @@ async function lightLogControls(lightintensity)
                if (err) reject(err);
                console.log("Lightintensity Off-Log code => " + res.statusCode);
                lightcontrolison = false;
-	       resolve(lightcontrolisoff);
+	       resolve(lightcontrolison);
             });
 	   });
         }
@@ -207,7 +207,8 @@ app.post('/sensor-data1', function(req, res) {
      console.log("sender => " + req.body.nodeid);
      console.log("light intensity => " + req.body.lightI);
      console.log("humidity ===> " + req.body.humid);
-     client_data[client_data.length > 0 ? client_data.length - 1 : 0] = { tempc: req.body.tempC, humidity: req.body.humid, soilm: req.body.soilM, lightInt: req.body.lightI, nodepos: req.body.nodepos, soilr: req.body.soilr };
+     let id = client_data.length > 0 ? client_data.length - 1 : 0;
+     client_data[id] = { tempc: req.body.tempC, humidity: req.body.humid, soilm: req.body.soilM, lightInt: req.body.lightI, nodepos: req.body.nodepos, soilr: req.body.soilr };
     //  client_data[req.body.nodeid] = { tempc: req.body.tempC, humidity: req.body.humid, soilm: req.body.soilM, lightInt: req.body.lightI, nodepos: req.body.nodepos };
      console.log(client_data[req.body.nodeid]);
      waterLogControl(req.body.waterLog, req.body.nodeid);
@@ -220,9 +221,10 @@ app.post('/sensor-data2', function(req, res) {
     console.log("sender => " + req.body.nodeid);
     console.log("light intensity => " + req.body.lightI);
     console.log("humidity ===> " + req.body.humid);
-    client_data[client_data.length > 0 ? client_data.length - 1 : 0] = { tempc: req.body.tempC, humidity: req.body.humid, soilm: req.body.soilM, lightInt: req.body.lightI, nodepos: req.body.nodepos, soilr: req.body.soilr };
+    let id = client_data.length > 0 ? client_data.length - 1 : 0;
+    client_data[id] = { tempc: req.body.tempC, humidity: req.body.humid, soilm: req.body.soilM, lightInt: req.body.lightI, nodepos: req.body.nodepos, soilr: req.body.soilr };
     // client_data[req.body.nodeid] = { tempc: req.body.tempC, humidity: req.body.humid, soilm: req.body.soilM, lightInt: req.body.lightI, nodepos: req.body.nodepos };
-    console.log(client_data[req.body.nodeid]);
+    console.log(client_data[id]);
     waterLogControl(req.body.waterLog, req.body.nodeid);
     res.status(200).send("Sucess");
    }
@@ -234,9 +236,10 @@ app.post('/sensor-data3', function(req, res) {
      console.log("sender => " + req.body.nodeid);
      console.log("light intensity => " + req.body.lightI);
      console.log("humidity ===> " + req.body.humid);
-     client_data[client_data.length > 0 ? client_data.length - 1 : 0] = { tempc: req.body.tempC, humidity: req.body.humid, soilm: req.body.soilM, lightInt: req.body.lightI, nodepos: req.body.nodepos, soilr: req.body.soilr };
+     let id = client_data.length > 0 ? client_data.length - 1 : 0;
+     client_data[id] = { tempc: req.body.tempC, humidity: req.body.humid, soilm: req.body.soilM, lightInt: req.body.lightI, nodepos: req.body.nodepos, soilr: req.body.soilr };
     //  client_data[req.body.nodeid] = { tempc: req.body.tempC, humidity: req.body.humid, soilm: req.body.soilM, lightInt: req.body.lightI, nodepos: req.body.nodepos };
-     console.log(client_data[req.body.nodeid]);
+     console.log(client_data[id]);
      waterLogControl(req.body.waterLog, req.body.nodeid);
      res.status(200).send("Success");
     }
@@ -247,10 +250,10 @@ app.post('/sensor-data4', function(req, res) {
      console.log("sender => " + req.body.nodeid);
      console.log("light intensity => " + req.body.lightI);
      console.log("humidity ===> " + req.body.humid);
-     console.log(client_data.length);
-     client_data[client_data.length > 0 ? client_data.length - 1 : 0] = { tempc: req.body.tempC, humidity: req.body.humid, soilm: req.body.soilM, lightInt: req.body.lightI, nodepos: req.body.nodepos, soilr: req.body.soilr };
+     let id = client_data.length > 0 ? client_data.length - 1 : 0;
+     client_data[id] = { tempc: req.body.tempC, humidity: req.body.humid, soilm: req.body.soilM, lightInt: req.body.lightI, nodepos: req.body.nodepos, soilr: req.body.soilr };
     //  client_data[req.body.nodeid] = { tempc: req.body.tempC, humidity: req.body.humid, soilm: req.body.soilM, lightInt: req.body.lightI, nodepos: req.body.nodepos };
-     console.log(client_data);
+     console.log(client_data[id]);
      waterLogControl(req.body.waterLog, req.body.nodeid);
      res.status(200).send("Success");
     }
