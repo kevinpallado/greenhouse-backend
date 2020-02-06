@@ -168,7 +168,7 @@ async function lightLogControls(lightintensity)
             request(http_post_req, function (err, res, body) {
                if (err) reject(err);
                console.log("Lightintensity Off-Log code => " + res.statusCode);
-               lightcontrolisoff = false;
+               lightcontrolison = false;
 	       resolve(lightcontrolisoff);
             });
 	   });
