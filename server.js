@@ -124,7 +124,7 @@ async function lightLogControls(lightintensity)
 {
     console.log("ALERT LIGHT INTENSITY!!!");
     //console.log("Light intensity => " + lightintesity);
-    if(lightintensity < 30 && lightintensity != undefined && lightintensity > 0)
+    if(lightintensity < 30 && lightintensity != undefined && lightintensity > 0 && lightintensity != Infinity && lightintensity != NaN)
     {
 	console.log("Light intensity => " + lightintensity);
         if(!lightcontrolison)
@@ -153,7 +153,7 @@ async function lightLogControls(lightintensity)
 	    });
         }
     }
-    else
+    else if(lightintensity != Infinity && lighintensity != NaN && lightintensity != undefined)
     {
         if(lightcontrolison)
         {
@@ -255,9 +255,10 @@ app.post('/sensor-data4', function(req, res) {
      console.log("sender => " + req.body.nodeid);
      console.log("light intensity => " + req.body.lightI);
      console.log("humidity ===> " + req.body.humid);
+     console.log(client_data.length);
      client_data[client_data.length > 0 ? client_data.length - 1 : 0] = { tempc: req.body.tempC, humidity: req.body.humid, soilm: req.body.soilM, lightInt: req.body.lightI, nodepos: req.body.nodepos };
     //  client_data[req.body.nodeid] = { tempc: req.body.tempC, humidity: req.body.humid, soilm: req.body.soilM, lightInt: req.body.lightI, nodepos: req.body.nodepos };
-     console.log(client_data[req.body.nodeid]);
+     console.log(client_data);
      waterLogControl(req.body.waterLog, req.body.nodeid);
      res.status(200).send("Success");
     }
