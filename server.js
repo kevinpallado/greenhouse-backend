@@ -215,8 +215,8 @@ app.post('/sensor-data1', function(req, res) {
      console.log("sender => " + req.body.nodeid);
      console.log("light intensity => " + req.body.lightI);
      console.log("humidity ===> " + req.body.humid);
-     client_data[client_data.length > 0 ? client_data.length - 1 : 0] = { tempc: req.body.tempC, humidity: req.body.humid, soilm: req.body.soilM, lightInt: req.body.lightI, nodepos: req.body.nodepos };
-    //  client_data[req.body.nodeid] = { tempc: req.body.tempC, humidity: req.body.humid, soilm: req.body.soilM, lightInt: req.body.lightI, nodepos: req.body.nodepos };
+     //client_data[client_data.length > 0 ? client_data.length - 1 : 0] = { tempc: req.body.tempC, humidity: req.body.humid, soilm: req.body.soilM, lightInt: req.body.lightI, nodepos: req.body.nodepos };
+     client_data[req.body.nodeid] = { tempc: req.body.tempC, humidity: req.body.humid, soilm: req.body.soilM, lightInt: req.body.lightI, nodepos: req.body.nodepos };
      console.log(client_data[req.body.nodeid]);
      waterLogControl(req.body.waterLog, req.body.nodeid);
      res.status(200).send("Succes");
@@ -228,8 +228,8 @@ app.post('/sensor-data2', function(req, res) {
     console.log("sender => " + req.body.nodeid);
     console.log("light intensity => " + req.body.lightI);
     console.log("humidity ===> " + req.body.humid);
-    client_data[client_data.length > 0 ? client_data.length - 1 : 0] = { tempc: req.body.tempC, humidity: req.body.humid, soilm: req.body.soilM, lightInt: req.body.lightI, nodepos: req.body.nodepos };
-    // client_data[req.body.nodeid] = { tempc: req.body.tempC, humidity: req.body.humid, soilm: req.body.soilM, lightInt: req.body.lightI, nodepos: req.body.nodepos };
+    // client_data[client_data.length > 0 ? client_data.length - 1 : 0] = { tempc: req.body.tempC, humidity: req.body.humid, soilm: req.body.soilM, lightInt: req.body.lightI, nodepos: req.body.nodepos };
+    client_data[req.body.nodeid] = { tempc: req.body.tempC, humidity: req.body.humid, soilm: req.body.soilM, lightInt: req.body.lightI, nodepos: req.body.nodepos };
     console.log(client_data[req.body.nodeid]);
     waterLogControl(req.body.waterLog, req.body.nodeid);
     res.status(200).send("Sucess");
