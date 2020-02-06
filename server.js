@@ -45,7 +45,9 @@ require('dns').lookup(require('os').hostname(), function (err, add, fam) {
     console.log('addr: ' + add);
 });
 app.use('/greenhouse', routes);
-
+app.get("/", (req, res) => {
+  res.send("Hello from Node.js!" + client_data + " <= client data ");
+});
 function noop() {
 }
 
@@ -69,7 +71,8 @@ async function foggerLogControl(humidity)
                 method: 'post',
                 body: {
                     component : "fogger",
-                    state : 1
+                    state : 1,
+		    position : "default"
                },
                json: true,
                url: "http://127.0.1.1:3000/greenhouse/event?event=control-logs"
@@ -95,7 +98,8 @@ async function foggerLogControl(humidity)
                 method: 'post',
                 body: {
                     component : "fogger",
-                    state : 0
+                    state : 0,
+		    position : "default"
                },
                json: true,
                url: "http://127.0.1.1:3000/greenhouse/event?event=control-logs"
@@ -131,7 +135,8 @@ async function lightLogControls(lightintensity)
                 method: 'post',
                 body: {
                     component : "LED Lights",
-                    state : 1
+                    state : 1,
+		    position : "default"
                },
                json: true,
                url: "http://127.0.1.1:3000/greenhouse/event?event=control-logs"
@@ -158,7 +163,8 @@ async function lightLogControls(lightintensity)
                 method: 'post',
                 body: {
                     component : "LED Lights",
-                    state : 1
+                    state : 1,
+		    position : "default"
                },
                json: true,
                url: "http://127.0.1.1:3000/greenhouse/event?event=control-logs"
@@ -177,7 +183,7 @@ async function lightLogControls(lightintensity)
     }
     averageLightIntensity = 0;
 }
-async function waterLogControl(waterLog)
+async function waterLogControl(waterLog, position)
 {
     if(waterLog)
         {
@@ -185,7 +191,8 @@ async function waterLogControl(waterLog)
                 method: 'post',
                 body: {
                     component : "Water Pump",
-                    state : 1
+                    state : 1,
+		    position : position
                },
                json: true,
                url: "http://127.0.1.1:3000/greenhouse/event?event=control-logs"
@@ -211,7 +218,8 @@ app.post('/sensor-data1', function(req, res) {
      client_data[client_data.length > 0 ? client_data.length - 1 : 0] = { tempc: req.body.tempC, humidity: req.body.humid, soilm: req.body.soilM, lightInt: req.body.lightI, nodepos: req.body.nodepos };
     //  client_data[req.body.nodeid] = { tempc: req.body.tempC, humidity: req.body.humid, soilm: req.body.soilM, lightInt: req.body.lightI, nodepos: req.body.nodepos };
      console.log(client_data[req.body.nodeid]);
-     waterLogControl(req.body.waterLog);
+     waterLogControl(req.body.waterLog, req.body.nodeid);
+     res.status(200).send("Succes");
     }
 });
 app.post('/sensor-data2', function(req, res) {
@@ -223,8 +231,10 @@ app.post('/sensor-data2', function(req, res) {
     client_data[client_data.length > 0 ? client_data.length - 1 : 0] = { tempc: req.body.tempC, humidity: req.body.humid, soilm: req.body.soilM, lightInt: req.body.lightI, nodepos: req.body.nodepos };
     // client_data[req.body.nodeid] = { tempc: req.body.tempC, humidity: req.body.humid, soilm: req.body.soilM, lightInt: req.body.lightI, nodepos: req.body.nodepos };
     console.log(client_data[req.body.nodeid]);
-    waterLogControl(req.body.waterLog);
+    waterLogControl(req.body.waterLog, req.body.nodeid);
+    res.status(200).send("Sucess");
    }
+
 });
 app.post('/sensor-data3', function(req, res) {
     if(req.body.nodeid != undefined)
@@ -235,7 +245,8 @@ app.post('/sensor-data3', function(req, res) {
      client_data[client_data.length > 0 ? client_data.length - 1 : 0] = { tempc: req.body.tempC, humidity: req.body.humid, soilm: req.body.soilM, lightInt: req.body.lightI, nodepos: req.body.nodepos };
     //  client_data[req.body.nodeid] = { tempc: req.body.tempC, humidity: req.body.humid, soilm: req.body.soilM, lightInt: req.body.lightI, nodepos: req.body.nodepos };
      console.log(client_data[req.body.nodeid]);
-     waterLogControl(req.body.waterLog);
+     waterLogControl(req.body.waterLog, req.body.nodeid);
+     res.status(200).send("Success");
     }
 });
 app.post('/sensor-data4', function(req, res) {
@@ -247,7 +258,8 @@ app.post('/sensor-data4', function(req, res) {
      client_data[client_data.length > 0 ? client_data.length - 1 : 0] = { tempc: req.body.tempC, humidity: req.body.humid, soilm: req.body.soilM, lightInt: req.body.lightI, nodepos: req.body.nodepos };
     //  client_data[req.body.nodeid] = { tempc: req.body.tempC, humidity: req.body.humid, soilm: req.body.soilM, lightInt: req.body.lightI, nodepos: req.body.nodepos };
      console.log(client_data[req.body.nodeid]);
-     waterLogControl(req.body.waterLog);
+     waterLogControl(req.body.waterLog, req.body.nodeid);
+     res.status(200).send("Success");
     }
 });
 
@@ -329,7 +341,9 @@ cron.schedule('*/30 * * * * *', () => {
             tempc : data.tempc,
             humidity : data.humidity,
             soilm : data.soilm,
-            lightInt: data.lightInt
+            soilr : data.soilr,
+            lightInt: data.lightInt,
+            lightr : 'default'
        },
        json: true,
        url: "http://127.0.1.1:3000/greenhouse/event?event=sensor-readings"
