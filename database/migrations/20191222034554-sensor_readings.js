@@ -20,7 +20,9 @@ module.exports = {
     temperatureC : Sequelize.FLOAT ,
     humidity: Sequelize.FLOAT,
     soilMoisture : Sequelize.FLOAT ,
+    soilRead : Sequelize.STRING,
     lightIntensity : Sequelize.FLOAT ,
+    lightRead: Sequelize.STRING,
     dateRecorded : {
       type: Sequelize.DATE,
       defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
